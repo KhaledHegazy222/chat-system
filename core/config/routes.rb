@@ -5,8 +5,7 @@ Rails.application.routes.draw do
   
   mount Sidekiq::Web => '/sidekiq'
 
-  # resources :applications
-  # resources :chats
-  # resources :messages
+  resources :applications
+  
 
 end
