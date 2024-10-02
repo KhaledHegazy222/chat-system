@@ -44,6 +44,7 @@ services:
       - DB_PORT=3306
       - DB_USER=admin
       - DB_PASSWORD=admin
+      - DB_NAME=chat_system
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     
