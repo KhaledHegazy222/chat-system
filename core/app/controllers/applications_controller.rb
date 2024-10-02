@@ -15,7 +15,7 @@ class ApplicationsController < ApplicationController
   def create
     name = app_params['name']
     uuid = SecureRandom.uuid
-    ProcessApplicationsJob.perform_async(name,uuid)
+    ProcessApplicationsJob.perform_async({name:name,token:uuid})
     render json: {status: "success"}
 
   end

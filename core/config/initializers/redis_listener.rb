@@ -1,6 +1,6 @@
 # config/initializers/redis_listener.rb
 Thread.new do
-  redis = Redis.new
+  redis = Redis.new(host:"redis",port: 6379,db: 0)
 
   loop do
     data = redis.brpop("chats_queue","messages_queue", timeout: 5) # Blocking pop operation

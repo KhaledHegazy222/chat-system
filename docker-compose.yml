@@ -64,11 +64,10 @@ services:
       - DB_PORT=3306
       - DB_USER=admin
       - DB_PASSWORD=admin
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379/1
       - RAILS_ENV=development
     volumes:
-      - ./core:/usr/src/app
+      - ./core:/app
 
 volumes:
   db_data:  
