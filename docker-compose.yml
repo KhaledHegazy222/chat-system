@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_database
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: chat_system
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+    volumes:
+      - redis_data:/data
+
+
+  go_app:
+    build:
+      context: ./chats
+      dockerfile: Dockerfile
+    container_name: chat_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app_network
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    
+  rails_app:
+    build:
+      context: ./core
+      dockerfile: Dockerfile
+    container_name: rails_service
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app_network
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RAILS_ENV=development
+    volumes:
+      - ./core:/usr/src/app
+
+volumes:
+  db_data:  
+  redis_data:
+
+networks:
+  app_network:
