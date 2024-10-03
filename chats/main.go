@@ -62,6 +62,13 @@ func createChat(c *gin.Context) {
 		panic(err)
 	}
 
+	// Add Chat to Redis Chat Messages Hash
+	chat_name_in_hash := "chat#" + application_token + "-" + strconv.Itoa(int(chats_number_result))
+	err = redis_client.HSet(c, "chats_messages_count", chat_name_in_hash, 0).Err()
+	if err != nil {
+		panic(err)
+	}
+
 	newChat.Number = int(chats_number_result)
 
 	// Create a queue message with the operation type "create"

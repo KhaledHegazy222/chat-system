@@ -7,13 +7,16 @@ Thread.new do
     if data
       queue_name = data[0]  
       payload = data[1]     
+
+      # Assuming that payload is always json object pased in string format
+      data = JSON.parse(payload)
       
       # Dispatch data to different workers based on the queue name
       case queue_name
       when "chats_queue"
-        ProcessChatsJob.perform_async(payload) 
+        ProcessChatsJob.perform_async(data) 
       when "messages_queue"
-        ProcessMessagesJob.perform_async(payload) 
+        ProcessMessagesJob.perform_async(data) 
       end 
     end
   end
