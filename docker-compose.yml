@@ -31,20 +31,14 @@ services:
     build:
       context: ./chats
       dockerfile: Dockerfile
-    container_name: chat_service
+    container_name: go_service
     ports:
       - "8080:8080"
     depends_on:
-      - db
       - redis
     networks:
       - app_network
     environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USER=admin
-      - DB_PASSWORD=admin
-      - DB_NAME=chat_system
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     
@@ -58,6 +52,7 @@ services:
     depends_on:
       - db
       - redis
+      - elastic_search
     networks:
       - app_network
     environment:
@@ -67,12 +62,27 @@ services:
       - DB_PASSWORD=admin
       - REDIS_URL=redis://redis:6379/1
       - RAILS_ENV=development
+      - ELASTICSEARCH_URL=http://elastic_search:9200
     volumes:
       - ./core:/app
+
+  elastic_search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
+    container_name: elastic_search
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elastic_search_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - app_network
 
 volumes:
   db_data:  
   redis_data:
+  elastic_search_data:
 
 networks:
   app_network:

@@ -4,12 +4,20 @@ class ApplicationsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @applications = Application.all
+    # Limit only the last 10 apps (later might add pagination)
+    @applications = Application.limit(10)
     render json: @applications.as_json(only: [:token, :name])
   end
+  
   def show
-    @application = Application.where(token: params[:id])
-    render json: @application.as_json(only: [:token, :name])
+    @application = Application.find_by(token: params[:token])
+    if @application
+      render json: @application.as_json(only: [:token, :name], include: {
+        chats: {only: [:number]}
+      })
+    else
+      render json: { error: 'Application not found' }, status: :not_found
+    end
   end
 
   def create
@@ -20,11 +28,10 @@ class ApplicationsController < ApplicationController
 
   end
 
+  # Strong parameters to allow only certain attributes
   private
-    # Only allow a list of trusted parameters through.
     def app_params
       params.require(:application).permit(:name)
     end
-  
 
 end

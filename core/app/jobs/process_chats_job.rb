@@ -37,7 +37,7 @@ class ProcessChatsJob
 
       # Add Chat to Redis Chats Hashset (number of messsages = 0)
       chat_name_in_hashset = "chat##{token}-#{number}"
-      redis.hset("chats_messages_count",chat_name_in_hash,0)
+      redis.hset("chats_messages_count",chat_name_in_hashset,0)
       
           
     end
