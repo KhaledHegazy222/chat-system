@@ -11,8 +11,10 @@ module Searchable
     def self.search(query)
       params = {
         query: {
-          match: {
-            content: query,
+          wildcard: {
+            content: {
+              value: "*query*"
+            },
           }
         }
       }
