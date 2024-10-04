@@ -35,17 +35,12 @@ var redis_client *redis.Client
 func createChat(c *gin.Context) {
 	var newChat chat
 
-	// Parse the JSON request body into the chat struct
-	if err := c.ShouldBindJSON(&newChat); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	application_token := newChat.ApplicationToken
-	application_name_in_hash := "app#" + application_token
+	ApplicationToken := c.Param("application_token")
+	newChat.ApplicationToken = ApplicationToken
 
 	// Check if the application is already created
 	// if created it will have a the application token will exists in applications_chats_count hash
+	application_name_in_hash := "app#" + ApplicationToken
 	exists, err := redis_client.HExists(c, "applications_chats_count", application_name_in_hash).Result()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existence for application"})
@@ -91,16 +86,24 @@ func createChat(c *gin.Context) {
 
 func createMessage(c *gin.Context) {
 	var newMessage message
+	applicationToken := c.Param("application_token")
+	chatNumber, err := strconv.Atoi(c.Param("chat_number"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error Parsing Chat Number"})
+	}
 
-	// Parse the JSON request body into the message struct
+	newMessage.ApplicationToken = applicationToken
+	newMessage.ChatNumber = chatNumber
+
+	// Parse the JSON request body into the chat struct
 	if err := c.ShouldBindJSON(&newMessage); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error,WWWWWWWWWWWWWWWWWWW": err.Error()})
 		return
 	}
 
-	application_token := newMessage.ApplicationToken
-	chat_number := newMessage.ChatNumber
-	chat_name_in_hash := "chat#" + application_token + "-" + strconv.Itoa(chat_number)
+
+
+	chat_name_in_hash := "chat#" + applicationToken + "-" + strconv.Itoa(chatNumber)
 
 	// Check if the chat is already created
 	// if created it will have a the chat_name will exists in chats_messages_count hash
@@ -147,7 +150,6 @@ func createMessage(c *gin.Context) {
 	c.JSON(http.StatusCreated, newMessage)
 }
 
-
 func main() {
 	// Connect to Redis Server
 	REDIS_HOST := os.Getenv("REDIS_HOST")
@@ -161,12 +163,10 @@ func main() {
 	router := gin.Default()
 
 	// Chat routes
-	router.POST("/chats", createChat)
+	router.POST("/applications/:application_token/chats", createChat)
 
 	// Message routes
-	router.POST("/messages/", createMessage)
-	
-	// router.PATCH("/messages/:application_token/:chat_number/:message_number", updateMessage)
+	router.POST("/applications/:application_token/chats/:chat_number/messages", createMessage)
 
 	router.Run("0.0.0.0:8080")
 

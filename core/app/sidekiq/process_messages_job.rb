@@ -1,7 +1,7 @@
 class ProcessMessagesJob
   include Sidekiq::Worker
 
-  # This Workter Batches Create at most 10K New Messages per execution
+  # This Worker Batches Create at most 10K New Messages per execution
   BATCH_SIZE = 10000
   def perform()
     redis = Redis.new(host:"redis",port: 6379,db: 0)

@@ -6,15 +6,13 @@ module Searchable
     include Elasticsearch::Model::Callbacks
 
     mapping do
-      # mapping definition goes here
       indexes :content, type: 'text'
     end
     def self.search(query)
       params = {
         query: {
-          multi_match: {
-            query: query,
-            fields: ['content'],
+          match: {
+            content: query,
           }
         }
       }

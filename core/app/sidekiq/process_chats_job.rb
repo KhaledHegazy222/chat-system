@@ -1,6 +1,7 @@
 class ProcessChatsJob
   include Sidekiq::Worker
-  # This Workter Batches Create at most 10K New Chats per execution
+
+  # This Worker Batches Create at most 10K New Chats per execution
   BATCH_SIZE = 10000
   def perform()
     redis = Redis.new(host:"redis",port: 6379,db: 0)
@@ -19,7 +20,6 @@ class ProcessChatsJob
     end
     
 
-    puts "New Chats: #{created_chats}"
     @applications = Application.where(token: application_tokens.uniq)
 
     # Create a hash map for quick lookups: { token => application_id }

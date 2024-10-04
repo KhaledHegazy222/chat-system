@@ -5,16 +5,14 @@ class ApplicationsController < ApplicationController
 
   def index
     # Limit only the last 10 apps (later might add pagination)
-    @applications = Application.limit(10)
+    @applications = Application.take(10)
     render json: @applications.as_json(only: [:token, :name])
   end
   
   def show
     @application = Application.find_by(token: params[:token])
     if @application
-      render json: @application.as_json(only: [:token, :name], include: {
-        chats: {only: [:number]}
-      })
+      render json: @application.as_json(only: [:token, :name])
     else
       render json: { error: 'Application not found' }, status: :not_found
     end
@@ -23,9 +21,8 @@ class ApplicationsController < ApplicationController
   def create
     name = app_params['name']
     uuid = SecureRandom.uuid
-    ProcessApplicationsJob.perform_async({"name" => name,"token" => uuid})
+    CreateApplicationJob.perform_async({"name" => name,"token" => uuid})
     render json: {name: name,uuid:uuid}
-
   end
 
   # Strong parameters to allow only certain attributes
