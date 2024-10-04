@@ -20,6 +20,7 @@ gem "jbuilder"
 
 gem "redis"
 gem 'sidekiq'
+gem 'sidekiq-cron'
 gem 'rack', '~> 3.0'
 
 

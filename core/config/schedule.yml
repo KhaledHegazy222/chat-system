@@ -1,0 +1,7 @@
+process_chat:
+  cron: "*/1 * * * *"
+  class: "ProcessChatsJob"
+  
+process_messages:
+  cron: "*/1 * * * *"
+  class: "ProcessMessagesJob"
