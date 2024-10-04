@@ -147,46 +147,6 @@ func createMessage(c *gin.Context) {
 	c.JSON(http.StatusCreated, newMessage)
 }
 
-// Update Message
-func updateMessage(c *gin.Context) {
-	var updatedMessage message
-
-	// Parse the JSON request body into the message struct
-	if err := c.ShouldBindJSON(&updatedMessage); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// TODO: Check if the message already exists
-	// application_token := updatedMessage.ApplicationToken
-	// chat_number := updatedMessage.ChatNumber
-	// chat_name_in_hash := "chat#" + application_token + "-" + strconv.Itoa(chat_number)
-
-	// Create a queue message with the operation type "update"
-	queueData := queueMessage{
-		Operation: "update",
-		Data:      updatedMessage,
-	}
-
-	// Serialize the queue message to JSON
-	queueMessageData, err := json.Marshal(queueData)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to serialize message data"})
-		return
-	}
-
-	// Push the serialized message data onto a Redis list (queue)
-	ctx := context.Background()
-	err = redis_client.RPush(ctx, "messages_queue", queueMessageData).Err()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to push message update to Redis queue"})
-		return
-	}
-
-	// Return the updated message data
-	c.JSON(http.StatusOK, updatedMessage)
-}
-
 
 func main() {
 	// Connect to Redis Server
@@ -202,12 +162,10 @@ func main() {
 
 	// Chat routes
 	router.POST("/chats", createChat)
-	// router.PATCH("/chats/", updateChat)
-	// router.PATCH("/chats/:application_token/:chat_number", updateChat)
 
 	// Message routes
 	router.POST("/messages/", createMessage)
-	router.PATCH("/messages/", updateMessage)
+	
 	// router.PATCH("/messages/:application_token/:chat_number/:message_number", updateMessage)
 
 	router.Run("0.0.0.0:8080")

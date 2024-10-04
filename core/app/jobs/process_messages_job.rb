@@ -1,57 +1,62 @@
 class ProcessMessagesJob
   include Sidekiq::Worker
-  BATCH_SIZE = 3
+
+  # This Workter Batches Create at most 10K New Messages per execution
+  BATCH_SIZE = 10000
   def perform()
     redis = Redis.new(host:"redis",port: 6379,db: 0)
     
     puts "Proecessing Messages......"  
     created_messages = []
-    updated_messages = []
+    application_tokens = []
+    chat_numbers = []
     BATCH_SIZE.times do
-      # This Queue contains newly created messages
-      data = redis.blpop('messages_queue',timeout: 1)
+      data = redis.lpop('messages_queue')
       if data
-        message = JSON.parse(data[1])
-        puts "Message: #{message}"
-        puts "Message Operation: #{message['operation']}"
-        if message['operation'] == 'create'
-            created_messages << message['data']
-        elsif message['operation'] == 'update'
-            updated_messages << message['data']
-        end
+        message = JSON.parse(data)
+        created_messages << message
+        application_tokens << message['data']['application_token']
+        chat_numbers << message['data']['chat_number']
+      else
+        break
       end
     end
 
-    return if created_messages.empty? and updated_messages.empty?
+    # Here we're selecting all chats that in the selected applications and with any number in the selected numbers
+    @chats = Chat.joins(:application)
+                .where(application: { token: application_tokens.uniq })
+                .where(number: chat_numbers.uniq)
+
+
+    chats_map = @chats.each_with_object({}) do |chat, hash|
+       hash[[chat.application.token, chat.number]] = chat.id
+    end
+
+    bulk_insert_data = []
 
     created_messages.each do |message_date|
-      # TODO: this code is creating only one instance, modify it to bulk insert the created messages here
-      number = message_date['number']
-      chat_number = message_date['chat_number']
-      application_token = message_date['application_token']
-      content = message_date['content']
+      token = message_date['data']['application_token']
+      chat_number = message_date['data']['chat_number']
+      number = message_date['data']['number']
+      content = message_date['data']['content']
+      chat_id = chats_map[[token,chat_number]]
       
-      @applications = Application.where(token:application_token)
-      if @applications.count == 0
-        puts "Application Not Found"
-        return
+      if chat_id
+        bulk_insert_data << {
+          chat_id: chat_id,
+          number: number,
+          content: content
+        }
+
+      else
+        puts "No Chat found for (token,number): (#{token},#{chat_number})"
       end
-
-      @application = @applications[0]
-    
-      @chats = @application.chats.where(number:chat_number)
-      if @chats.count == 0
-        puts "Chat Not Found"
-        return
-      end
-
-      @chat = @chats[0]
-      @message =  @chat.messages.create(number:number,content:content)
-      puts "New Message Created #{@message.id} #{@message.number} #{@message.content}"
-
     end
 
-    # TODO: Bulk Updates....
+    return if created_messages.empty?
+
+    Message.insert_all(bulk_insert_data)
+    puts "Batch inserted #{bulk_insert_data.size} messages"
     
   end
 end
