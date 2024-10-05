@@ -1,47 +1,63 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
     image: mysql:8.0
     container_name: mysql_database
     environment:
-      MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_DATABASE: chat_system
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    restart: always
     volumes:
       - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
       - app_network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DB_USER}",
+          "--password=${DB_PASSWORD}",
+        ]
+      timeout: 20s
+      retries: 10
 
   redis:
     image: redis:alpine
     container_name: redis_cache
     ports:
       - "6379:6379"
+    restart: always
     networks:
       - app_network
     volumes:
       - redis_data:/data
 
-
   go_app:
     build:
-      context: ./chats
+      context: ./go
       dockerfile: Dockerfile
     container_name: go_service
     ports:
       - "8080:8080"
     depends_on:
       - redis
+    restart: always
     networks:
       - app_network
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
   rails_app:
     build:
       context: ./core
@@ -50,19 +66,23 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
-      - redis
-      - elastic_search
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      elastic_search:
+        condition: service_started
+    restart: always
     networks:
       - app_network
     environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USER=admin
-      - DB_PASSWORD=admin
-      - REDIS_URL=redis://redis:6379
-      - RAILS_ENV=development
-      - ELASTICSEARCH_URL=http://elastic_search:9200
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_URL: "redis://${REDIS_HOST}:${REDIS_PORT}"
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      RAILS_ENV: ${RAILS_ENV}
     volumes:
       - ./core:/app
 
@@ -70,17 +90,18 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
     container_name: elastic_search
     environment:
-      - discovery.type=single-node
+      discovery.type: ${ELASTICSEARCH_DISCOVERY_TYPE}
     volumes:
       - elastic_search_data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
       - 9300:9300
+    restart: always
     networks:
       - app_network
 
 volumes:
-  db_data:  
+  db_data:
   redis_data:
   elastic_search_data:
 
