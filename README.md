@@ -46,10 +46,10 @@ To run the application and all its services (MySQL, Redis, Elasticsearch, Sideki
 
 ```
 docker-compose up --build
-```
+  ```
 
 4. Seed the Database (Optional):
 
 ```bash
-docker-compose exec web rails db:seed
+docker-compose exec rails_app rake chat:seed 
 ```

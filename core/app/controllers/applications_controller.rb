@@ -20,9 +20,9 @@ class ApplicationsController < ApplicationController
 
   def create
     name = app_params['name']
-    uuid = SecureRandom.uuid
-    CreateApplicationJob.perform_async({"name" => name,"token" => uuid})
-    render json: {name: name,uuid:uuid}
+    token = SecureRandom.hex(10)
+    CreateApplicationJob.perform_async({"name" => name,"token" => token})
+    render json: {name: name,token:token}
   end
 
   # Strong parameters to allow only certain attributes
