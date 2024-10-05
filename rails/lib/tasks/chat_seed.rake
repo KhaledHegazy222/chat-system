@@ -60,6 +60,17 @@ namespace :chat do
         puts "Created #{chats_count} chats for #{app.name}."
       end
 
+      # Populating Redis Server Data
+      Application.all.each do |app|
+        application_name_in_hashset = "app##{app.token}"
+        REDIS.hset('applications_chats_count', application_name_in_hashset , app.chats_count)
+      end
+
+      Chat.all.includes(:application).each do |chat|
+        chat_name_in_hashset = "chat##{chat.application.token}-#{chat.number}"
+        REDIS.hset("chats_messages_count", chat_name_in_hashset, chat.messages_count)
+      end
+
       puts "Seeded Applications, Chats, and Messages successfully!"
   end
 end

@@ -10,8 +10,6 @@ class ProcessAggregatedCountsJob
     # (might run on multiple rails servers)
     lock_key = 'aggregated_count_lock'
     if acquire_lock(lock_key)
-
-      puts "Lock Aquired Successfully"
       begin
         # Wrap It in transaction
         ActiveRecord::Base.transaction do 
@@ -41,7 +39,6 @@ class ProcessAggregatedCountsJob
         end
       ensure
         release_lock(lock_key)
-        puts "Completed Aggregations !"
       end
     else
       puts "Failed To Aquire The lock, skipping the job..."
