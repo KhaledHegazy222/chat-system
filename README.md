@@ -20,17 +20,16 @@ Before you begin, ensure you have the following installed:
 
 ## Getting Started
 
-1- Clone the Repository:
+### Clone the Repository:
 
 ```bash
 git clone https://github.com/KhaledHegazy222/chat-system.git
 cd chat-system
 ```
 
-2.Set Up Environment Variables:
+### Set Up Environment Variables:
 
-Create a .env file in the root directory and add the following variables:
-> you can also use .env.example (rename it `.env`)
+Create a .env file in the root directory and add the following variables, you can also use `.env.example` (rename it `.env`)
 
 ```
 REDIS_HOST=redis
@@ -49,7 +48,7 @@ ELASTICSEARCH_URL=http://elastic_search:9200
 ELASTICSEARCH_DISCOVERY_TYPE=single-node
 ```
 
-3. Start the Application:
+### Start the Application:
 
 To run the application and all its services (MySQL, Redis, Elasticsearch, Sidekiq, Rails), simply run:
 
@@ -57,7 +56,7 @@ To run the application and all its services (MySQL, Redis, Elasticsearch, Sideki
 docker-compose up --build
   ```
 
-4. Seed the Database (Optional):
+### Seed the Database (Optional):
 
 ```bash
 docker-compose exec rails_app rake chat:seed 
