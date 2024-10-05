@@ -5,3 +5,8 @@ process_chat:
 process_messages:
   cron: "*/1 * * * *"
   class: "ProcessMessagesJob"
+
+
+aggregate_counts:
+  cron: "*/1 * * * *"
+  class: "ProcessAggregatedCountsJob"

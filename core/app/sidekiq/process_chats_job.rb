@@ -4,14 +4,13 @@ class ProcessChatsJob
   # This Worker Batches Create at most 10K New Chats per execution
   BATCH_SIZE = 10000
   def perform()
-    redis = Redis.new(host:"redis",port: 6379,db: 0)
     
     puts "Proecessing Chats......"  
     created_chats = []
     application_tokens = []
     BATCH_SIZE.times do
       # This Queue contains newly created chats
-      data = redis.lpop('chats_queue')
+      data = REDIS.lpop('chats_queue')
       if data
         chat = JSON.parse(data)
         created_chats << chat
@@ -62,7 +61,7 @@ class ProcessChatsJob
 
     # Add Chat to Redis Chats Hashset
     redis_insert_data.each do |chat_data|
-      redis.hset("chats_messages_count", chat_data[:key], chat_data[:value])
+      REDIS.hset("chats_messages_count", chat_data[:key], chat_data[:value])
     end
     
   end

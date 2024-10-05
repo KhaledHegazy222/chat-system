@@ -12,8 +12,8 @@ module Searchable
       params = {
         query: {
           wildcard: {
-            content: {
-              value: "*query*"
+            "cpnmcase_insensitive": {
+              value: "*#{query.downcase}*"
             },
           }
         }

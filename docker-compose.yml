@@ -60,7 +60,7 @@ services:
       - DB_PORT=3306
       - DB_USER=admin
       - DB_PASSWORD=admin
-      - REDIS_URL=redis://redis:6379/1
+      - REDIS_URL=redis://redis:6379
       - RAILS_ENV=development
       - ELASTICSEARCH_URL=http://elastic_search:9200
     volumes:

@@ -4,14 +4,14 @@ class ProcessMessagesJob
   # This Worker Batches Create at most 10K New Messages per execution
   BATCH_SIZE = 10000
   def perform()
-    redis = Redis.new(host:"redis",port: 6379,db: 0)
+    
     
     puts "Proecessing Messages......"  
     created_messages = []
     application_tokens = []
     chat_numbers = []
     BATCH_SIZE.times do
-      data = redis.lpop('messages_queue')
+      data = REDIS.lpop('messages_queue')
       if data
         message = JSON.parse(data)
         created_messages << message
