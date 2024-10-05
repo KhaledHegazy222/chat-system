@@ -30,14 +30,23 @@ cd chat-system
 2.Set Up Environment Variables:
 
 Create a .env file in the root directory and add the following variables:
+> you can also use .env.example (rename it `.env`)
 
 ```
-MYSQL_USER=root
-MYSQL_PASSWORD=secret
-MYSQL_HOST=mysql
-MYSQL_DATABASE=chat_system
-REDIS_URL=redis://redis:6379/0
-ELASTICSEARCH_URL=http://elasticsearch:9200
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE= chat_system
+DB_ROOT_PASSWORD= my-secret-pw
+DB_USER=admin
+DB_PASSWORD=admin
+
+RAILS_ENV=development
+
+ELASTICSEARCH_URL=http://elastic_search:9200
+ELASTICSEARCH_DISCOVERY_TYPE=single-node
 ```
 
 3. Start the Application:
