@@ -11,14 +11,14 @@
 # Seed Applications
 
 APPLICATIONS_NUMBER = 10
-MIN_CHATS_NUMBER = 20
-MAX_CHATS_NUMBER = 30
-MIN_MESSAGES_NUMBER = 50
-MAX_MESSAGES_NUMBER = 100
+MIN_CHATS_NUMBER = 50
+MAX_CHATS_NUMBER = 100
+MIN_MESSAGES_NUMBER = 100
+MAX_MESSAGES_NUMBER = 300
 
 APPLICATIONS_NUMBER.times do |i|
   chats_count = rand(MIN_CHATS_NUMBER..MAX_CHATS_NUMBER)
-  messages_count = rand(MIN_MESSAGES_NUMBER..MAX_MESSAGES_NUMBER)
+  
   # Create the Application record
   app = Application.create!(
     token: SecureRandom.hex(10),
@@ -29,6 +29,7 @@ APPLICATIONS_NUMBER.times do |i|
   # Prepare bulk inserts for chats
   chats = []
   chats_count.times do |j|
+    messages_count = rand(MIN_MESSAGES_NUMBER..MAX_MESSAGES_NUMBER)
     chats << {
       number: j + 1,
       application_id: app.id,
