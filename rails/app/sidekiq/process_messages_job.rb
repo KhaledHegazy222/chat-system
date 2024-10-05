@@ -15,8 +15,8 @@ class ProcessMessagesJob
       if data
         message = JSON.parse(data)
         created_messages << message
-        application_tokens << message['data']['application_token']
-        chat_numbers << message['data']['chat_number']
+        application_tokens << message['application_token']
+        chat_numbers << message['chat_number']
       else
         break
       end
@@ -35,10 +35,10 @@ class ProcessMessagesJob
     bulk_insert_data = []
 
     created_messages.each do |message_date|
-      token = message_date['data']['application_token']
-      chat_number = message_date['data']['chat_number']
-      number = message_date['data']['number']
-      content = message_date['data']['content']
+      token = message_date['application_token']
+      chat_number = message_date['chat_number']
+      number = message_date['number']
+      content = message_date['content']
       chat_id = chats_map[[token,chat_number]]
       
       if chat_id

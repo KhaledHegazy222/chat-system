@@ -14,7 +14,7 @@ class ProcessChatsJob
       if data
         chat = JSON.parse(data)
         created_chats << chat
-        application_tokens << chat['data']['application_token']
+        application_tokens << chat['application_token']
       end
     end
     
@@ -30,8 +30,8 @@ class ProcessChatsJob
     redis_insert_data = []
 
     created_chats.each do |chat_data|
-      token = chat_data['data']['application_token']
-      number = chat_data['data']['number']
+      token = chat_data['application_token']
+      number = chat_data['number']
       application_id = application_map[token]
 
       if application_id

@@ -24,11 +24,6 @@ type message struct {
 	Content          string `json:"content"`
 }
 
-type queueMessage struct {
-	Operation string      `json:"operation"`
-	Data      interface{} `json:"data"`
-}
-
 // Redis Client
 var redis_client *redis.Client
 
@@ -59,14 +54,8 @@ func createChat(c *gin.Context) {
 
 	newChat.Number = int(chats_number_result)
 
-	// Create a queue message with the operation type "create"
-	queueData := queueMessage{
-		Operation: "create",
-		Data:      newChat,
-	}
-
 	// Serialize the queue message to JSON
-	queueMessageData, err := json.Marshal(queueData)
+	queueMessageData, err := json.Marshal(newChat)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to serialize chat data"})
 		return
@@ -101,8 +90,6 @@ func createMessage(c *gin.Context) {
 		return
 	}
 
-
-
 	chat_name_in_hash := "chat#" + applicationToken + "-" + strconv.Itoa(chatNumber)
 
 	// Check if the chat is already created
@@ -125,14 +112,8 @@ func createMessage(c *gin.Context) {
 
 	newMessage.Number = int(messages_number_result)
 
-	// Create a queue message with the operation type "create"
-	queueData := queueMessage{
-		Operation: "create",
-		Data:      newMessage,
-	}
-
 	// Serialize the queue message to JSON
-	queueMessageData, err := json.Marshal(queueData)
+	queueMessageData, err := json.Marshal(newMessage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to serialize message data"})
 		return
