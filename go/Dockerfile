@@ -12,7 +12,7 @@ RUN go mod download && go mod verify
 COPY . .
 
 # Build the Go application and place the output in /app/bin
-RUN go build -v -o /usr/local/bin/server ./...
+RUN go build -v -o /usr/local/bin/server ./cmd/server
 
 # Copy the docker-entrypoint script and make it executable
 COPY ./bin/docker-entrypoint /usr/local/bin/docker-entrypoint
