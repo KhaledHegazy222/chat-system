@@ -53,11 +53,11 @@ ELASTICSEARCH_DISCOVERY_TYPE=single-node
 To run the application and all its services (MySQL, Redis, Elasticsearch, Sidekiq, Rails), simply run:
 
 ```
-docker-compose up --build
-  ```
+docker compose up --build
+```
 
 ### Seed the Database (Optional):
 
 ```bash
-docker-compose exec rails_app rake chat:seed 
+docker compose exec rails_app rake chat:seed
 ```
