@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_05_114821) do
     t.bigint "application_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title", null: false
+    t.string "title", default: ""
     t.integer "messages_count", default: 0, null: false
     t.index ["application_id", "number"], name: "index_chats_on_application_id_and_number", unique: true
     t.index ["application_id"], name: "index_chats_on_application_id"
