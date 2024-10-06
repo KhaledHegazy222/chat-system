@@ -1,7 +1,7 @@
 namespace :chat do
   desc "Run chat system seeding"
   task seed: :environment do
-    
+    ActiveRecord::Base.transaction do
       APPLICATIONS_NUMBER = 10
       MIN_CHATS_NUMBER = 50
       MAX_CHATS_NUMBER = 100
@@ -10,7 +10,7 @@ namespace :chat do
 
       APPLICATIONS_NUMBER.times do |i|
         chats_count = rand(MIN_CHATS_NUMBER..MAX_CHATS_NUMBER)
-        
+
         # Create the Application record
         app = Application.create!(
           token: SecureRandom.hex(10),
@@ -32,13 +32,12 @@ namespace :chat do
           }
         end
 
-        
         # Bulk create Chats
         Chat.insert_all(chats)
 
         chats = Chat.where(application_id: app.id)
         messages = []
-        
+
         # Now we need to seed messages for each chat
         chats.each do |chat|
           chat_id = chat.id
@@ -54,9 +53,9 @@ namespace :chat do
             }
           end
         end
+
         # Bulk create Messages
         Message.insert_all(messages)
-
         puts "Created #{chats_count} chats for #{app.name}."
       end
 
@@ -72,5 +71,11 @@ namespace :chat do
       end
 
       puts "Seeded Applications, Chats, and Messages successfully!"
+
+      # Perform the job after seeding
+      ProcessUnindexedMessagesJob.perform_sync()
+    end
+  rescue => e
+    puts "Seeding failed: #{e.message}"
   end
 end

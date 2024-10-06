@@ -12,4 +12,8 @@ fi
 
 bundle exec sidekiq & 
 
+# Create Message Index in elastic search
+rails runner "Message.__elasticsearch__.create_index!"
+
+
 exec "${@}"

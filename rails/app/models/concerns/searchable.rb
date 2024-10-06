@@ -6,15 +6,13 @@ module Searchable
     include Elasticsearch::Model::Callbacks
 
     mapping do
-      indexes :content, type: 'text'
+      indexes :content, type: :text
     end
     def self.search(query)
       params = {
         query: {
-          wildcard: {
-            "cpnmcase_insensitive": {
-              value: "*#{query.downcase}*"
-            },
+          match: {
+              content: query
           }
         }
       }
