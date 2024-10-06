@@ -15,6 +15,7 @@ import (
 type chat struct {
 	Number           int    `json:"number"`
 	ApplicationToken string `json:"application_token"`
+	Title            string `json:"title"`
 }
 
 type message struct {
@@ -32,6 +33,12 @@ func createChat(c *gin.Context) {
 
 	ApplicationToken := c.Param("application_token")
 	newChat.ApplicationToken = ApplicationToken
+
+	// Parse the JSON request body into the chat struct
+	if err := c.ShouldBindJSON(&newChat); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Check if the application is already created
 	// if created it will have a the application token will exists in applications_chats_count hash
@@ -86,7 +93,7 @@ func createMessage(c *gin.Context) {
 
 	// Parse the JSON request body into the chat struct
 	if err := c.ShouldBindJSON(&newMessage); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error,WWWWWWWWWWWWWWWWWWW": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
