@@ -1,14 +1,28 @@
+# Use an official Go runtime as a parent image
 FROM golang:1.23
 
-WORKDIR /usr/src/app
+# Set the working directory inside the container
+WORKDIR /app
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
+# Copy go.mod and go.sum to leverage Docker cache for dependencies
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
+# Copy the entire source code to the working directory
 COPY . .
-RUN go build -v -o /usr/local/bin/app ./...
 
+# Build the Go application and place the output in /app/bin
+RUN go build -v -o /usr/local/bin/server ./...
+
+# Copy the docker-entrypoint script and make it executable
+COPY ./bin/docker-entrypoint /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
+
+# Set the entrypoint for the container
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+
+# Expose the port the server will run on
 EXPOSE 8080
 
-CMD ["app"]
+# Set the default command to run the server
+CMD ["/usr/local/bin/server"]
