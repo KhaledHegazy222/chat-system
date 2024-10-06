@@ -2,13 +2,16 @@ class ChatsController < ApplicationController
   skip_before_action :verify_authenticity_token  
   def index
     # Limit only the last 10 chats (later might add pagination)
-    @chats = Chat.includes(:application).take(10)
-    render json: @chats.as_json(only: [:number,:title],include: {application: {only: [:token,:name]}})
+    @chats = Chat.joins(:application).take(10)
+    render json: @chats.as_json(
+      only: [:number,:title],
+      # include: {application: {only: [:token,:name]}}
+    )
   end
 
   def show
     @chat = Chat
-    .includes(:application)
+    .joins(:application)
     .find_by(
       number:params[:chat_number],
       application: {token: params[:application_token]}
@@ -18,9 +21,10 @@ class ChatsController < ApplicationController
     if @chat
         render json: @chat.as_json(
           only: [:number,:title],
-          include: [
-            {application: {only: [:token,:name]}},
-          ])
+          # include: [
+          #   {application: {only: [:token,:name]}},
+          # ]
+          )
     elsif 
       render json: { error: 'Chat not found' }, status: :not_found
     end
@@ -29,12 +33,11 @@ class ChatsController < ApplicationController
 
 
   def edit
-    @chat = Chat
-    .includes(:application)
-    .find_by(
-      number:params[:chat_number],
-      application: {token: params[:application_token]}
-    )
+    @chat = Chat.joins(:application)
+                .find_by(
+                  number:params[:chat_number],
+                  application: {token: params[:application_token]}
+                )
 
     if not @chat 
       render json: { error: 'Chat not found' }, status: :not_found
