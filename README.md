@@ -67,4 +67,6 @@ docker compose exec rails_app rake chat:seed
 ```bash
 # Run GO API Tests
 docker compose exec go_app go test --cover ./internal/api
+# Run RAILS API Tests
+docker compose exec rails_app rails test
 ```
