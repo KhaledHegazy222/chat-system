@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  token: MyString
-  name: MyString
+  token: token1
+  name: App1
 
 two:
-  token: MyString
-  name: MyString
+  token: token2
+  name: App2
