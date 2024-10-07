@@ -70,3 +70,254 @@ docker compose exec rails_app rails test
 ```bash
 docker compose exec rails_app rake chat:seed
 ```
+
+## API Documentation
+
+### Overview
+
+This API consists of two services: **Go** and **Ruby**. Each service has its own set of endpoints, which are described below.
+
+---
+
+### Go Service Endpoints
+
+#### Create Chat
+
+- URL: `/applications/:application_token/chats`
+- Method: POST
+- Request Body:
+
+```json
+{
+  "title": "string" // Chat title
+}
+```
+
+- Response:
+  - 201 Created: Returns the created chat.
+
+```json
+{
+  "number": "number",
+  "application_token": "string",
+  "title": "string"
+}
+```
+
+#### Create Message
+
+- URL: `/applications/:application_token/chats/:chat_number/messages`
+- Method: POST
+- Request Body:
+
+```json
+{
+  "content": "string"
+}
+```
+
+- Response:
+  - 201 Created: Returns the created resource.
+
+```json
+{
+  "number": "number",
+  "chat_number": "number",
+  "application_token": "string",
+  "content": "string"
+}
+```
+
+## Rails Service Endpoints
+
+#### Create Application
+
+- URL: `/applications`
+- Method: POST
+- Request Body:
+
+```json
+{
+  "name": "string"
+}
+```
+
+- Response:
+  - 201 Created: Returns the created resource.
+
+```json
+{
+  "name": "string",
+  "token": "string"
+}
+```
+
+#### List All Applications
+
+- URL: `/applications`
+- Method: GET
+
+- Response:
+  - 200 OK: Returns the created resource.
+
+```json
+[
+  {
+    "name": "string",
+    "token": "string"
+  },
+  {
+    "name": "string",
+    "token": "string"
+  }
+]
+```
+
+#### Fetch Application by token
+
+- URL: `/applications/:token`
+- Method: GET
+
+- Response:
+  - 200 OK: Returns the created resource.
+
+```json
+{
+  "name": "string",
+  "token": "string"
+}
+```
+
+#### List All Chats
+
+- URL: `/chats`
+- Method: GET
+
+- Response:
+  - 200 OK: Returns the created resource.
+
+```json
+[
+  {
+    "number": "number",
+    "title": "string"
+  },
+  {
+    "number": "number",
+    "title": "string"
+  }
+]
+```
+
+#### Fetch Chat by app token and chat number
+
+- URL: `/applications/:application_token/chats/:chat_number`
+- Method: GET
+
+- Response:
+  - 201 Created: Returns the created resource.
+
+```json
+{
+  "number": "number",
+  "title": "string"
+}
+```
+
+#### Edit Chat title
+
+- URL: `/applications/:application_token/chats/:chat_number`
+- Method: POST
+- Request Body:
+
+```json
+{
+  "title": "string"
+}
+```
+
+- Response:
+  - 200 OK: Returns the created resource.
+
+```json
+{
+  "status": "success"
+}
+```
+
+#### List All Messages
+
+- URL: `/messages/`
+- Method: GET
+
+- Response:
+  - 200 OK
+
+```json
+[
+  {
+    "number": "number",
+    "content": "string"
+  },
+  {
+    "number": "number",
+    "content": "string"
+  }
+]
+```
+
+#### List All Message in a specific chat
+
+- URL: `/applications/:application_token/chats/:chat_number/messages`
+- Method: GET
+- Response:
+  - 200 OK
+
+```json
+[
+  {
+    "number": "number",
+    "content": "string"
+  },
+  {
+    "number": 1,
+    "content": "string"
+  }
+]
+```
+
+#### Fetch Message by app token and chat number and chat number
+
+- URL: `/applications/:application_token/chats/:chat_number/messages/:messages_number`
+- Method: GET
+
+- Response:
+  - 200 OK
+
+```json
+{
+  "number": "number",
+  "content": "string"
+}
+```
+
+#### Edit Message content
+
+- URL: `/applications/:application_token/chats/:chat_number/messages/:messages_number`
+- Method: POST
+- Request Body:
+
+```json
+{
+  "content": "string"
+}
+```
+
+- Response:
+  - 200 OK
+
+```json
+{
+  "status": "success"
+}
+```
