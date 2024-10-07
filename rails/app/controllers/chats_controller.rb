@@ -3,10 +3,10 @@ class ChatsController < ApplicationController
 
   def index
     # Limit only the last 10 chats (later might add pagination)
-    @chats = Chat.joins(:application).take(10)
+    @chats = Chat.includes(:application).take(10)
     render json: @chats.as_json(
       only: [:number,:title],
-      # include: {application: {only: [:token,:name]}}
+      include: {application: {only: [:token,:name]}}
     )
   end
 
@@ -16,7 +16,7 @@ class ChatsController < ApplicationController
     end
 
     @chat = Chat
-            .joins(:application)
+            .includes(:application)
             .find_by(
               number: params[:chat_number],
               application: { token: params[:application_token] }
@@ -25,9 +25,9 @@ class ChatsController < ApplicationController
     if @chat
       render json: @chat.as_json(
         only: [:number,:title],
-        # include: [
-        #   {application: {only: [:token,:name]}},
-        # ]
+        include: [
+          {application: {only: [:token,:name]}},
+        ]
         )
     else
       render json: { error: 'Chat not found' }, status: :not_found

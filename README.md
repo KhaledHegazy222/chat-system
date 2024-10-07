@@ -95,7 +95,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 ```
 
 - Response:
-  - 201 Created: Returns the created chat.
+  - 201 Created
 
 ```json
 {
@@ -118,7 +118,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 ```
 
 - Response:
-  - 201 Created: Returns the created resource.
+  - 201 Created
 
 ```json
 {
@@ -144,7 +144,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 ```
 
 - Response:
-  - 201 Created: Returns the created resource.
+  - 201 Created
 
 ```json
 {
@@ -159,7 +159,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 - Method: GET
 
 - Response:
-  - 200 OK: Returns the created resource.
+  - 200 OK
 
 ```json
 [
@@ -180,7 +180,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 - Method: GET
 
 - Response:
-  - 200 OK: Returns the created resource.
+  - 200 OK
 
 ```json
 {
@@ -195,7 +195,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 - Method: GET
 
 - Response:
-  - 200 OK: Returns the created resource.
+  - 200 OK
 
 ```json
 [
@@ -216,7 +216,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 - Method: GET
 
 - Response:
-  - 201 Created: Returns the created resource.
+  - 201 Created
 
 ```json
 {
@@ -238,7 +238,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 ```
 
 - Response:
-  - 200 OK: Returns the created resource.
+  - 200 OK
 
 ```json
 {
@@ -272,7 +272,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 - URL: `/applications/:application_token/chats/:chat_number/messages?q=`
 - Method: GET
 - Query Parameters:
-  - key: `q` 
+  - key: `q`
   - usage: search string to use elastic search in messages body
 - Response:
   - 200 OK

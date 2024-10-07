@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @messages = Message.joins(chat: :application).all
+    @messages = Message.includes(chat: :application).all
     
     if params[:q].present?
       @messages = Message.search(params[:q])
@@ -12,16 +12,16 @@ class MessagesController < ApplicationController
    
     render json: @messages.as_json(
       only: [:number,:content],
-      # include: {
-      #   chat: {
-      #     only: [:number],
-      #     include: {
-      #       application: {
-      #         only: [:name, :token]
-      #       }
-      #     }
-      #   }
-      # }
+      include: {
+        chat: {
+          only: [:number,:title],
+          include: {
+            application: {
+              only: [:name, :token]
+            }
+          }
+        }
+      }
     )
   end
 
@@ -30,7 +30,7 @@ class MessagesController < ApplicationController
       return render json: { error: 'Missing required parameters' }, status: :bad_request
     end
 
-    @message = Message.joins(chat: :application)
+    @message = Message.includes(chat: :application)
                       .where(applications: { token: params[:application_token] })
                       .where(chats: { number: params[:chat_number] })
                       .where(number: params[:messages_number])
@@ -39,16 +39,16 @@ class MessagesController < ApplicationController
     if @message
       render json: @message.as_json(
         only: [:number,:content],
-        # include: {
-        #   chat: {
-        #     only: [:number],
-        #     include: {
-        #       application: {
-        #         only: [:name, :token]
-        #       }
-        #     }
-        #   }
-        # }
+        include: {
+          chat: {
+            only: [:number,:title],
+            include: {
+              application: {
+                only: [:name, :token]
+              }
+            }
+          }
+        }
       )
     else
       render json: { error: 'Message not found' }, status: :not_found
@@ -60,7 +60,7 @@ class MessagesController < ApplicationController
       return render json: { error: 'Missing required parameters' }, status: :bad_request
     end
 
-    @messages = Message.joins(chat: :application).all
+    @messages = Message.includes(chat: :application).all
                        .where(applications: { token: params[:application_token] })
                        .where(chats: { number: params[:chat_number] })  
                   
@@ -71,16 +71,16 @@ class MessagesController < ApplicationController
     @messages = @messages.take(10)
     render json: @messages.as_json(
       only: [:number,:content],
-      # include: {
-      #   chat: {
-      #     only: [:number],
-      #     include: {
-      #       application: {
-      #         only: [:name, :token]
-      #       }
-      #     }
-      #   }
-      # }
+      include: {
+        chat: {
+          only: [:number,:title],
+          include: {
+            application: {
+              only: [:name, :token]
+            }
+          }
+        }
+      }
     )  
   end
 
