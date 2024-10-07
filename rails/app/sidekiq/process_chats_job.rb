@@ -35,12 +35,14 @@ class ProcessChatsJob
       created_chats.each do |chat_data|
         token = chat_data['application_token']
         number = chat_data['number']
+        title = chat_data['title']
         application_id = application_map[token]
 
         if application_id
           bulk_insert_data << {
             application_id: application_id,
             number: number,
+            title: title,
           }
 
           # Prepare data for Redis insertions
