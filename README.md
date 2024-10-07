@@ -269,8 +269,11 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 
 #### List All Message in a specific chat
 
-- URL: `/applications/:application_token/chats/:chat_number/messages`
+- URL: `/applications/:application_token/chats/:chat_number/messages?q=`
 - Method: GET
+- Query Parameters:
+  - key: `q` 
+  - usage: search string to use elastic search in messages body
 - Response:
   - 200 OK
 
