@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-
 func TestCreateChat(t *testing.T) {
 	// Set up the Gin engine
 	r := gin.Default()
@@ -32,6 +31,7 @@ func TestCreateChat(t *testing.T) {
 		chat := models.Chat{
 			ApplicationToken: "testAppToken",
 			Number:           1,
+			Title:            "testTitle",
 		}
 
 		// Mock Redis behavior
@@ -95,6 +95,7 @@ func TestCreateChat(t *testing.T) {
 		chat := models.Chat{
 			ApplicationToken: "testAppToken",
 			Number:           1,
+			Title:            "testTitle",
 		}
 		jsonData, _ := json.Marshal(chat)
 		req, _ := http.NewRequest(http.MethodPost, "/chats/testAppToken", bytes.NewReader(jsonData))
@@ -125,6 +126,7 @@ func TestCreateChat(t *testing.T) {
 		// Create the HTTP request with valid data
 		chat := models.Chat{
 			ApplicationToken: "testAppToken",
+			Title:            "TestTitle",
 		}
 		jsonData, _ := json.Marshal(chat)
 		req, _ := http.NewRequest(http.MethodPost, "/chats/testAppToken", bytes.NewReader(jsonData))
@@ -156,6 +158,7 @@ func TestCreateChat(t *testing.T) {
 		// Create the HTTP request with valid data
 		chat := models.Chat{
 			ApplicationToken: "testAppToken",
+			Title:            "TestTitle",
 		}
 		jsonData, _ := json.Marshal(chat)
 		req, _ := http.NewRequest(http.MethodPost, "/chats/testAppToken", bytes.NewReader(jsonData))
