@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateMessage(c *gin.Context) {
+func CreateMessage(c *gin.Context, redis redis.RedisClient) {
 	var newMessage models.Message
 	appToken := c.Param("application_token")
 	chatNumber, err := strconv.Atoi(c.Param("chat_number"))

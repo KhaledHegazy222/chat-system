@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateChat(c *gin.Context) {
+func CreateChat(c *gin.Context, redis redis.RedisClient) {
 	var newChat models.Chat
 	appToken := c.Param("application_token")
 	newChat.ApplicationToken = appToken

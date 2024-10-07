@@ -8,28 +8,44 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var redisClient *redis.Client
+// RedisClient defines the interface for the methods used by Redis operations
+type RedisClient interface {
+	KeyExists(ctx context.Context, hashKey, field string) (bool, error)
+	IncrementField(ctx context.Context, hashKey, field string) (int64, error)
+	PushToQueue(ctx context.Context, queueName string, data interface{}) error
+}
 
-func InitRedis() {
-	redisClient = redis.NewClient(&redis.Options{
+// RedisClientWrapper wraps the *redis.Client and implements RedisClient interface
+type RedisClientWrapper struct {
+	client *redis.Client
+}
+
+// NewRedisClientWrapper creates and returns a new RedisClientWrapper
+func NewRedisClientWrapper() *RedisClientWrapper {
+	client := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
 		Password: "",
 		DB:       0,
 	})
+
+	return &RedisClientWrapper{client: client}
 }
 
-func KeyExists(ctx context.Context, hashKey, field string) (bool, error) {
-	return redisClient.HExists(ctx, hashKey, field).Result()
+// KeyExists checks if a key exists in the Redis hash
+func (r *RedisClientWrapper) KeyExists(ctx context.Context, hashKey, field string) (bool, error) {
+	return r.client.HExists(ctx, hashKey, field).Result()
 }
 
-func IncrementField(ctx context.Context, hashKey, field string) (int64, error) {
-	return redisClient.HIncrBy(ctx, hashKey, field, 1).Result()
+// IncrementField increments a field in a Redis hash by 1
+func (r *RedisClientWrapper) IncrementField(ctx context.Context, hashKey, field string) (int64, error) {
+	return r.client.HIncrBy(ctx, hashKey, field, 1).Result()
 }
 
-func PushToQueue(ctx context.Context, queueName string, data interface{}) error {
+// PushToQueue pushes an item into a Redis list
+func (r *RedisClientWrapper) PushToQueue(ctx context.Context, queueName string, data interface{}) error {
 	queueMessageData, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
-	return redisClient.RPush(ctx, queueName, queueMessageData).Err()
+	return r.client.RPush(ctx, queueName, queueMessageData).Err()
 }
