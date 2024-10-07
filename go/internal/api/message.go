@@ -3,9 +3,9 @@ package api
 import (
 	"chat_system/internal/models"
 	"chat_system/internal/redis"
-
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +25,15 @@ func CreateMessage(c *gin.Context, redis redis.RedisClient) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Validation for the required Content field
+	if newMessage.Content == "" { // Assuming Content is the only required field
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Content is a required field"})
+		return
+	}
+
+	// Trim whitespace from the Content field
+	newMessage.Content = strings.TrimSpace(newMessage.Content)
 
 	ctx := c.Request.Context()
 	chatHashKey := "chat#" + appToken + "-" + strconv.Itoa(chatNumber)

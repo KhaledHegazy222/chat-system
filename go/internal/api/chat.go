@@ -4,6 +4,7 @@ import (
 	"chat_system/internal/models"
 	"chat_system/internal/redis"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,15 @@ func CreateChat(c *gin.Context, redis redis.RedisClient) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Validation for the required Title field
+	if newChat.Title == "" { // Assuming Title is the only required field
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Title is a required field"})
+		return
+	}
+
+	// Trim whitespace from the Title field
+	newChat.Title = strings.TrimSpace(newChat.Title)
 
 	ctx := c.Request.Context()
 	appHashKey := "app#" + appToken
