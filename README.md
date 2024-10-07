@@ -61,3 +61,10 @@ docker compose up --build
 ```bash
 docker compose exec rails_app rake chat:seed
 ```
+
+### Run Tests:
+
+```bash
+# Run GO API Tests
+docker compose exec go_app go test --cover ./internal/api
+```
