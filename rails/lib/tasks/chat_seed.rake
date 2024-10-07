@@ -2,11 +2,11 @@ namespace :chat do
   desc "Run chat system seeding"
   task seed: :environment do
     ActiveRecord::Base.transaction do
-      APPLICATIONS_NUMBER = 10
-      MIN_CHATS_NUMBER = 50
-      MAX_CHATS_NUMBER = 100
-      MIN_MESSAGES_NUMBER = 100
-      MAX_MESSAGES_NUMBER = 300
+      APPLICATIONS_NUMBER = 3
+      MIN_CHATS_NUMBER = 10
+      MAX_CHATS_NUMBER = 20
+      MIN_MESSAGES_NUMBER = 30
+      MAX_MESSAGES_NUMBER = 40
 
       APPLICATIONS_NUMBER.times do |i|
         chats_count = rand(MIN_CHATS_NUMBER..MAX_CHATS_NUMBER)

@@ -56,12 +56,6 @@ To run the application and all its services (MySQL, Redis, Elasticsearch, Sideki
 docker compose up --build
 ```
 
-### Seed the Database (Optional):
-
-```bash
-docker compose exec rails_app rake chat:seed
-```
-
 ### Run Tests:
 
 ```bash
@@ -69,4 +63,10 @@ docker compose exec rails_app rake chat:seed
 docker compose exec go_app go test --cover ./internal/api
 # Run RAILS API Tests
 docker compose exec rails_app rails test
+```
+
+### Seed the Database (Optional):
+
+```bash
+docker compose exec rails_app rake chat:seed
 ```
