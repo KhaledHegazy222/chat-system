@@ -1,5 +1,3 @@
-require 'securerandom'
-
 class ApplicationsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
@@ -20,15 +18,21 @@ class ApplicationsController < ApplicationController
 
   def create
     name = app_params['name']
+    
+    # Validate presence of the name attribute
+    if name.blank?
+      return render json: { error: 'Application name is required' }, status: :bad_request
+    end
+
     token = SecureRandom.hex(10)
-    CreateApplicationJob.perform_async({"name" => name,"token" => token})
-    render json: {name: name,token:token}
+    CreateApplicationJob.perform_async({"name" => name, "token" => token})
+    render json: { name: name, token: token }, status: :created
   end
 
   # Strong parameters to allow only certain attributes
   private
+
     def app_params
       params.require(:application).permit(:name)
     end
-
 end

@@ -9,7 +9,7 @@ class MessagesController < ApplicationController
     end
 
     @messages = @messages.take(10)
-    
+   
     render json: @messages.as_json(
       only: [:number,:content],
       # include: {
@@ -25,9 +25,11 @@ class MessagesController < ApplicationController
     )
   end
 
-
-
   def show
+    if params[:application_token].blank? || params[:chat_number].blank? || params[:messages_number].blank?
+      return render json: { error: 'Missing required parameters' }, status: :bad_request
+    end
+
     @message = Message.joins(chat: :application)
                       .where(applications: { token: params[:application_token] })
                       .where(chats: { number: params[:chat_number] })
@@ -53,8 +55,11 @@ class MessagesController < ApplicationController
     end
   end
 
-
   def search
+    if params[:application_token].blank? || params[:chat_number].blank?
+      return render json: { error: 'Missing required parameters' }, status: :bad_request
+    end
+
     @messages = Message.joins(chat: :application).all
                        .where(applications: { token: params[:application_token] })
                        .where(chats: { number: params[:chat_number] })  
@@ -64,7 +69,6 @@ class MessagesController < ApplicationController
     end
 
     @messages = @messages.take(10)
-    
     render json: @messages.as_json(
       only: [:number,:content],
       # include: {
@@ -77,10 +81,14 @@ class MessagesController < ApplicationController
       #     }
       #   }
       # }
-    )
+    )  
   end
 
   def edit
+    if params[:application_token].blank? || params[:chat_number].blank? || params[:messages_number].blank? || message_params[:content].blank?
+      return render json: { error: 'Missing required parameters' }, status: :bad_request
+    end
+
     @message = Message.joins(chat: :application)
                       .where(applications: { token: params[:application_token] })
                       .where(chats: { number: params[:chat_number] })
@@ -88,19 +96,17 @@ class MessagesController < ApplicationController
                       .first
 
     if not @message
-      render json: { error: 'Message not found' }, status: :not_found
-      return
+      return render json: { error: 'Message not found' }, status: :not_found
     end
 
     UpdateMessageJob.perform_sync({"id" => @message.id, "content" => message_params['content']})
-    render json: {status: "success"}
-  
+    render json: { status: "success" }
   end
 
   # Strong parameters to allow only certain attributes
   private
+
   def message_params
     params.require(:message).permit(:content)
   end
-
 end
