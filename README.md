@@ -10,6 +10,7 @@ The system is built using **Ruby on Rails** for the API and workers. It uses **M
 
 1. [Prerequisites](#prerequisites)
 1. [Getting Started](#getting-started)
+1. [API Documentation](#api-documentation)
 
 ## Prerequisites
 
@@ -89,7 +90,7 @@ This API consists of two services: **Go** and **Ruby**. Each service has its own
 
 ```json
 {
-  "title": "string" // Chat title
+  "title": "string"
 }
 ```
 
